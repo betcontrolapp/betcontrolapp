@@ -68,14 +68,14 @@ function Index() {
         date: data.date, descricao: data.descricao, esporte: data.esporte,
         investido: data.investido, retorno: data.retorno, status: data.status,
       }).eq("id", data.id);
-      if (error) return toast.error(error.message);
+      if (error) { toast.error(error.message); return; }
       toast.success("Atualizado");
     } else {
       const { error } = await supabase.from("bets").insert({
         user_id: user.id, date: data.date, descricao: data.descricao, esporte: data.esporte,
         investido: data.investido, retorno: data.retorno, status: data.status,
       });
-      if (error) return toast.error(error.message);
+      if (error) { toast.error(error.message); return; }
       toast.success("Aposta salva");
     }
     reload();
