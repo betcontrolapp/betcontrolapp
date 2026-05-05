@@ -166,8 +166,17 @@ function Index() {
       </main>
 
       <BetModal
+        key={editing?.id ?? (modalOpen ? "new" : "closed")}
         open={modalOpen || !!editing}
         onOpenChange={(v) => { if (!v) { setModalOpen(false); setEditing(null); } }}
+        defaultName={(() => {
+          const today = new Date();
+          const k = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`;
+          const inMonth = bets.filter((b) => monthKey(b.date) === k);
+          const nums = inMonth.map((b) => parseInt(b.descricao, 10)).filter((n) => !isNaN(n));
+          const next = (nums.length ? Math.max(...nums) : 0) + 1;
+          return String(next);
+        })()}
         initial={editing ? {
           id: editing.id, date: editing.date, descricao: editing.descricao,
           esporte: editing.esporte, investido: Number(editing.investido),
