@@ -1,7 +1,13 @@
 import { useState } from "react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { CalendarIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import { Stepper } from "./Stepper";
 import { brl } from "@/lib/format";
 
@@ -21,16 +27,18 @@ export function BetModal({
   open,
   onOpenChange,
   initial,
+  defaultName,
   onSave,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   initial?: Partial<BetFormData>;
+  defaultName?: string;
   onSave: (data: BetFormData) => Promise<void>;
 }) {
   const [data, setData] = useState<BetFormData>({
     date: new Date().toISOString().slice(0, 10),
-    descricao: "",
+    descricao: defaultName ?? "1",
     esporte: "⚽",
     investido: 50,
     retorno: 0,
@@ -38,8 +46,10 @@ export function BetModal({
     ...initial,
   });
   const [saving, setSaving] = useState(false);
+  const [calOpen, setCalOpen] = useState(false);
 
   const lucro = data.status === "ganhou" ? data.retorno - data.investido : data.status === "perdeu" ? -data.investido : 0;
+  const dateObj = new Date(data.date + "T00:00:00");
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -53,7 +63,7 @@ export function BetModal({
             <Input
               value={data.descricao}
               onChange={(e) => setData({ ...data, descricao: e.target.value })}
-              placeholder="Ex: Flamengo x Palmeiras"
+              placeholder="Ex: 1, 2, 3..."
             />
           </div>
           <div>
@@ -73,7 +83,33 @@ export function BetModal({
           </div>
           <div>
             <label className="text-xs text-muted-foreground">Data</label>
-            <Input type="date" value={data.date} onChange={(e) => setData({ ...data, date: e.target.value })} />
+            <Popover open={calOpen} onOpenChange={setCalOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn("w-full justify-start text-left font-normal mt-1", !data.date && "text-muted-foreground")}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {data.date ? format(dateObj, "PPP", { locale: ptBR }) : "Escolher data"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={dateObj}
+                  onSelect={(d) => {
+                    if (d) {
+                      const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+                      setData({ ...data, date: iso });
+                      setCalOpen(false);
+                    }
+                  }}
+                  initialFocus
+                  locale={ptBR}
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </PopoverContent>
+            </Popover>
           </div>
           <div>
             <label className="text-xs text-muted-foreground">Resultado</label>
