@@ -58,10 +58,16 @@ function AdminPage() {
     reload();
   }, [user, loading]);
 
+  const getToken = async () => {
+    const { data } = await supabase.auth.getSession();
+    return data.session?.access_token ?? "";
+  };
+
   const reload = async () => {
     setBusy(true);
     try {
-      const r = await listFn();
+      const token = await getToken();
+      const r = await listFn({ data: { token } });
       setUsers(r.users as U[]);
       setLicenses(r.licenses as Lic[]);
     } catch (e: any) {
