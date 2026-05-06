@@ -165,6 +165,9 @@ function Index() {
             Plano <span className="font-semibold uppercase">{lic.plan}</span>
             {lic.expiresAt && lic.plan !== "lifetime" && <> · válido até {new Date(lic.expiresAt).toLocaleDateString("pt-BR")}</>}
           </div>
+          {user.email === "mix.maketing.bc@gmail.com" && (
+            <div><Link to="/admin" className="opacity-50 hover:opacity-100">⚙️ Admin</Link></div>
+          )}
         </footer>
       </main>
 
