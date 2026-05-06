@@ -103,7 +103,7 @@ function AdminPage() {
 
   const submitNewUser = async () => {
     try {
-      await createUserFn({ data: { email: newEmail, password: newPwd } });
+      await createUserFn({ data: { token: await getToken(), email: newEmail, password: newPwd } });
       toast.success("Usuário criado");
       setNewUserOpen(false); setNewEmail(""); setNewPwd("");
       reload();
@@ -117,6 +117,7 @@ function AdminPage() {
     try {
       await upsertFn({
         data: {
+          token: await getToken(),
           id: licEdit.id,
           user_id: licEdit.user_id!,
           plan: licEdit.plan as any,
@@ -132,7 +133,7 @@ function AdminPage() {
 
   const toggleLic = async (l: Lic) => {
     try {
-      await toggleFn({ data: { id: l.id, active: !l.active } });
+      await toggleFn({ data: { token: await getToken(), id: l.id, active: !l.active } });
       reload();
     } catch (e: any) { toast.error(e?.message ?? "Erro"); }
   };
