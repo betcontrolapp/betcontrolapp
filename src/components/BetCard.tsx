@@ -34,7 +34,7 @@ export function BetCard({
   const lucro = status === "ganhou" ? retorno - investido : status === "perdeu" ? -investido : 0;
 
   return (
-    <div className={`rounded-xl border-2 ${STATUS_STYLES[status]} overflow-hidden`}>
+    <div className={`rounded-xl border-2 ${STATUS_STYLES[status]} overflow-hidden text-[1.2em]`}>
       <div className="p-4 space-y-3">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
