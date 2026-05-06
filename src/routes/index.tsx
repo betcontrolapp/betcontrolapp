@@ -159,9 +159,12 @@ function Index() {
           <BarChart3 className="inline w-4 h-4 mr-1" /> Dashboard
         </Link>
 
-        <footer className="text-center text-xs text-muted-foreground pt-6">
-          Plano <span className="font-semibold uppercase">{lic.plan}</span>
-          {lic.expiresAt && lic.plan !== "lifetime" && <> · válido até {new Date(lic.expiresAt).toLocaleDateString("pt-BR")}</>}
+        <footer className="text-center text-xs text-muted-foreground pt-6 space-y-1">
+          <div>{user.email}</div>
+          <div>
+            Plano <span className="font-semibold uppercase">{lic.plan}</span>
+            {lic.expiresAt && lic.plan !== "lifetime" && <> · válido até {new Date(lic.expiresAt).toLocaleDateString("pt-BR")}</>}
+          </div>
         </footer>
       </main>
 
