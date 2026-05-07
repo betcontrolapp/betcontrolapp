@@ -31,10 +31,10 @@ export function BetCard({
   const investido = Number(bet.investido);
   const retorno = Number(bet.retorno);
   const status = bet.status as keyof typeof STATUS_STYLES;
-  const lucro = status === "ganhou" ? retorno - investido : status === "perdeu" ? -investido : 0;
+  const lucro = status !== "pendente" ? retorno - investido : 0;
 
   return (
-    <div className={`rounded-xl border-2 ${STATUS_STYLES[status]} overflow-hidden text-[1.38em]`}>
+    <div className={`rounded-xl border-2 ${STATUS_STYLES[status]} overflow-hidden text-[1.66em]`}>
       <div className="p-4 space-y-3">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
@@ -59,7 +59,8 @@ export function BetCard({
 
         {status !== "pendente" && (
           <div className={`text-center font-bold ${lucro >= 0 ? "text-win" : "text-loss"}`}>
-            {lucro >= 0 ? "Lucro " : "Perda "}{brl(lucro)}
+            {lucro >= 0 ? "Lucro " : "Perda "}
+            {brl(lucro)}
           </div>
         )}
 
@@ -67,6 +68,14 @@ export function BetCard({
           <Stepper label="Apostou" value={investido} onChange={(v) => onUpdate({ investido: v })} />
           {status === "ganhou" && (
             <Stepper label="Recebeu" value={retorno} onChange={(v) => onUpdate({ retorno: v })} />
+          )}
+          {status === "perdeu" && (
+            <Stepper
+              label="Perdeu"
+              value={Math.max(0, investido - retorno)}
+              max={investido}
+              onChange={(v) => onUpdate({ retorno: Math.max(0, investido - v) })}
+            />
           )}
         </div>
       </div>
