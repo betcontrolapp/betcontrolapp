@@ -51,7 +51,7 @@ function Index() {
   if (!lic.valid) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
-        <div className="max-w-sm text-center bg-card border-2 border-loss rounded-2xl p-6 space-y-3">
+        <div className="max-w-sm text-center bg-card border-2 border-loss rounded-2xl p-6 space-y-3 text-[1.2em]">
           <div className="text-5xl">⛔</div>
           <h2 className="text-xl font-bold">Licença expirada</h2>
           <p className="text-sm text-muted-foreground">Entre em contato para renovar seu acesso.</p>
@@ -132,7 +132,7 @@ function Index() {
                   onConcluir={() => setConcluding(b)}
                 />
               ))}
-              <div className={`rounded-xl border-2 p-4 ${positive ? "border-win text-win" : "border-loss text-loss"}`}>
+              <div className={`rounded-xl border-2 p-4 text-[1.2em] ${positive ? "border-win text-win" : "border-loss text-loss"}`}>
                 <div className="text-xs uppercase opacity-80">Saldo do mês</div>
                 <div className="font-bold text-2xl">{brl(saldo)}</div>
                 <div className="text-xs mt-1 text-muted-foreground">
