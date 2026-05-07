@@ -48,7 +48,7 @@ function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="w-full max-w-sm bg-card border border-border rounded-2xl p-6 space-y-4">
+      <div className="w-full max-w-sm bg-card border border-border rounded-2xl p-6 space-y-4 text-[1.2em]">
         <div className="text-center">
           <div className="text-3xl font-bold">🏆 BET TRACK</div>
           <div className="text-xs text-muted-foreground mt-1">PRO</div>
