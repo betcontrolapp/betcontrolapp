@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Stepper } from "./Stepper";
@@ -15,7 +15,13 @@ export function ConcluirModal({
   onConfirm: (status: "ganhou" | "perdeu", retorno: number) => Promise<void>;
 }) {
   const [status, setStatus] = useState<"ganhou" | "perdeu">("ganhou");
-  const [retorno, setRetorno] = useState(bet ? Number(bet.investido) * 2 : 0);
+  const [retorno, setRetorno] = useState(0);
+
+  useEffect(() => {
+    if (!bet) return;
+    setStatus("ganhou");
+    setRetorno(Number(bet.investido) * 2);
+  }, [bet?.id, bet?.investido]);
 
   if (!bet) return null;
   const lucro = status === "ganhou" ? retorno - Number(bet.investido) : -Number(bet.investido);
