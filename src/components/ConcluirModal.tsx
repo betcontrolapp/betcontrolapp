@@ -68,7 +68,7 @@ export function ConcluirModal({
           {status === "ganhou" ? (
             <Stepper label="Recebeu" value={retorno} onChange={setRetorno} />
           ) : (
-            <Stepper label="Perdeu" value={perda} onChange={setPerda} />
+            <Stepper label="Perdeu" value={perda} onChange={setPerda} max={investido} />
           )}
           <div
             className={`text-center p-3 rounded-md font-bold text-lg ${lucro >= 0 ? "bg-win-bg text-win" : "bg-loss-bg text-loss"}`}
