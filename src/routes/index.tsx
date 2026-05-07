@@ -31,7 +31,9 @@ function Index() {
     setBets(data ?? []);
   };
 
-  useEffect(() => { if (user && lic.valid) reload(); }, [user, lic.valid]);
+  useEffect(() => {
+    if (user && lic.valid) reload();
+  }, [user, lic.valid]);
 
   const grouped = useMemo(() => {
     const map = new Map<string, Tables<"bets">[]>();
@@ -44,7 +46,11 @@ function Index() {
   }, [bets]);
 
   if (authLoading || lic.loading) {
-    return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Carregando...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center text-muted-foreground">
+        Carregando...
+      </div>
+    );
   }
   if (!user) return null;
 
@@ -55,8 +61,17 @@ function Index() {
           <div className="text-5xl">⛔</div>
           <h2 className="text-xl font-bold">Licença expirada</h2>
           <p className="text-sm text-muted-foreground">Entre em contato para renovar seu acesso.</p>
-          {lic.expiresAt && <p className="text-xs text-muted-foreground">Expirou em {new Date(lic.expiresAt).toLocaleDateString("pt-BR")}</p>}
-          <button onClick={() => supabase.auth.signOut().then(() => nav({ to: "/login" }))} className="text-xs underline">Sair</button>
+          {lic.expiresAt && (
+            <p className="text-xs text-muted-foreground">
+              Expirou em {new Date(lic.expiresAt).toLocaleDateString("pt-BR")}
+            </p>
+          )}
+          <button
+            onClick={() => supabase.auth.signOut().then(() => nav({ to: "/login" }))}
+            className="text-xs underline"
+          >
+            Sair
+          </button>
         </div>
       </div>
     );
@@ -64,25 +79,43 @@ function Index() {
 
   const save = async (data: BetFormData) => {
     if (data.id) {
-      const { error } = await supabase.from("bets").update({
-        date: data.date, descricao: data.descricao, esporte: data.esporte,
-        investido: data.investido, retorno: data.retorno, status: data.status,
-      }).eq("id", data.id);
-      if (error) { toast.error(error.message); return; }
+      const { error } = await supabase
+        .from("bets")
+        .update({
+          date: data.date,
+          descricao: data.descricao,
+          esporte: data.esporte,
+          investido: data.investido,
+          retorno: data.retorno,
+          status: data.status,
+        })
+        .eq("id", data.id);
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
       toast.success("Atualizado");
     } else {
       const { error } = await supabase.from("bets").insert({
-        user_id: user.id, date: data.date, descricao: data.descricao, esporte: data.esporte,
-        investido: data.investido, retorno: data.retorno, status: data.status,
+        user_id: user.id,
+        date: data.date,
+        descricao: data.descricao,
+        esporte: data.esporte,
+        investido: data.investido,
+        retorno: data.retorno,
+        status: data.status,
       });
-      if (error) { toast.error(error.message); return; }
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
       toast.success("Aposta salva");
     }
     reload();
   };
 
   const updateBet = async (id: string, patch: Partial<Tables<"bets">>) => {
-    setBets((b) => b.map((x) => (x.id === id ? { ...x, ...patch } as Tables<"bets"> : x)));
+    setBets((b) => b.map((x) => (x.id === id ? ({ ...x, ...patch } as Tables<"bets">) : x)));
     await supabase.from("bets").update(patch).eq("id", id);
   };
 
@@ -97,7 +130,10 @@ function Index() {
       <header className="sticky top-0 z-10 bg-[#060b14]/90 backdrop-blur border-b border-border">
         <div className="max-w-[500px] mx-auto px-4 py-3 flex items-center justify-between">
           <div className="font-bold tracking-wide">🏆 BET TRACK</div>
-          <button onClick={() => supabase.auth.signOut().then(() => nav({ to: "/login" }))} className="text-muted-foreground hover:text-foreground">
+          <button
+            onClick={() => supabase.auth.signOut().then(() => nav({ to: "/login" }))}
+            className="text-muted-foreground hover:text-foreground"
+          >
             <LogOut className="w-4 h-4" />
           </button>
         </div>
@@ -132,7 +168,9 @@ function Index() {
                   onConcluir={() => setConcluding(b)}
                 />
               ))}
-              <div className={`rounded-xl border-2 p-4 text-[1.2em] ${positive ? "border-win text-win" : "border-loss text-loss"}`}>
+              <div
+                className={`rounded-xl border-2 p-4 text-[1.2em] ${positive ? "border-win text-win" : "border-loss text-loss"}`}
+              >
                 <div className="text-xs uppercase opacity-80">Saldo do mês</div>
                 <div className="font-bold text-2xl">{brl(saldo)}</div>
                 <div className="text-xs mt-1 text-muted-foreground">
@@ -150,12 +188,18 @@ function Index() {
         })}
 
         {grouped.length === 0 && (
-          <button onClick={() => setModalOpen(true)} className="w-full border-2 border-dashed border-border rounded-xl py-4">
+          <button
+            onClick={() => setModalOpen(true)}
+            className="w-full border-2 border-dashed border-border rounded-xl py-4"
+          >
             <Plus className="inline w-4 h-4" /> Nova Aposta
           </button>
         )}
 
-        <Link to="/dashboard" className="block w-full text-center bg-primary text-primary-foreground font-bold py-3 rounded-xl">
+        <Link
+          to="/dashboard"
+          className="block w-full text-center bg-primary text-primary-foreground font-bold py-3 rounded-xl"
+        >
           <BarChart3 className="inline w-4 h-4 mr-1" /> Dashboard
         </Link>
 
@@ -163,10 +207,16 @@ function Index() {
           <div>{user.email}</div>
           <div>
             Plano <span className="font-semibold uppercase">{lic.plan}</span>
-            {lic.expiresAt && lic.plan !== "lifetime" && <> · válido até {new Date(lic.expiresAt).toLocaleDateString("pt-BR")}</>}
+            {lic.expiresAt && lic.plan !== "lifetime" && (
+              <> · válido até {new Date(lic.expiresAt).toLocaleDateString("pt-BR")}</>
+            )}
           </div>
           {user.email === "mix.maketing.bc@gmail.com" && (
-            <div><Link to="/admin" className="opacity-50 hover:opacity-100">⚙️ Admin</Link></div>
+            <div>
+              <Link to="/admin" className="opacity-50 hover:opacity-100">
+                ⚙️ Admin
+              </Link>
+            </div>
           )}
         </footer>
       </main>
@@ -174,7 +224,12 @@ function Index() {
       <BetModal
         key={editing?.id ?? (modalOpen ? "new" : "closed")}
         open={modalOpen || !!editing}
-        onOpenChange={(v) => { if (!v) { setModalOpen(false); setEditing(null); } }}
+        onOpenChange={(v) => {
+          if (!v) {
+            setModalOpen(false);
+            setEditing(null);
+          }
+        }}
         defaultName={(() => {
           const today = new Date();
           const k = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`;
@@ -183,16 +238,26 @@ function Index() {
           const next = (nums.length ? Math.max(...nums) : 0) + 1;
           return String(next);
         })()}
-        initial={editing ? {
-          id: editing.id, date: editing.date, descricao: editing.descricao,
-          esporte: editing.esporte, investido: Number(editing.investido),
-          retorno: Number(editing.retorno), status: editing.status as "pendente" | "ganhou" | "perdeu",
-        } : undefined}
+        initial={
+          editing
+            ? {
+                id: editing.id,
+                date: editing.date,
+                descricao: editing.descricao,
+                esporte: editing.esporte,
+                investido: Number(editing.investido),
+                retorno: Number(editing.retorno),
+                status: editing.status as "pendente" | "ganhou" | "perdeu",
+              }
+            : undefined
+        }
         onSave={save}
       />
       <ConcluirModal
         bet={concluding}
-        onOpenChange={(v) => { if (!v) setConcluding(null); }}
+        onOpenChange={(v) => {
+          if (!v) setConcluding(null);
+        }}
         onConfirm={async (status, retorno) => {
           if (!concluding) return;
           await supabase.from("bets").update({ status, retorno }).eq("id", concluding.id);

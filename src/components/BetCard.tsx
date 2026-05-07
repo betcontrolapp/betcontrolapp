@@ -81,14 +81,23 @@ export function BetCard({
       </div>
 
       <div className="border-t border-border grid grid-cols-3 divide-x divide-border">
-        <button onClick={onDelete} className="py-3 text-sm text-loss hover:bg-loss/10 flex items-center justify-center gap-1">
+        <button
+          onClick={onDelete}
+          className="py-3 text-sm text-loss hover:bg-loss/10 flex items-center justify-center gap-1"
+        >
           <Trash2 className="w-4 h-4" /> Excluir
         </button>
-        <button onClick={onEdit} className="py-3 text-sm hover:bg-accent flex items-center justify-center gap-1">
+        <button
+          onClick={onEdit}
+          className="py-3 text-sm hover:bg-accent flex items-center justify-center gap-1"
+        >
           <Pencil className="w-4 h-4" /> Editar
         </button>
         {status === "pendente" ? (
-          <button onClick={onConcluir} className="py-3 text-sm text-win hover:bg-win/10 flex items-center justify-center gap-1">
+          <button
+            onClick={onConcluir}
+            className="py-3 text-sm text-win hover:bg-win/10 flex items-center justify-center gap-1"
+          >
             <Check className="w-4 h-4" /> Concluir
           </button>
         ) : (

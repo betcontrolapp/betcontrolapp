@@ -5,7 +5,16 @@ import { useAuth } from "@/hooks/useAuth";
 import type { Tables } from "@/integrations/supabase/types";
 import { brl, monthKey, monthLabel } from "@/lib/format";
 import { ArrowLeft } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell } from "recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+  Cell,
+} from "recharts";
 import heroImg from "@/assets/dashboard-hero.jpg";
 import { Input } from "@/components/ui/input";
 
@@ -20,9 +29,15 @@ function Dashboard() {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
 
-  useEffect(() => { if (!loading && !user) nav({ to: "/login" }); }, [loading, user, nav]);
   useEffect(() => {
-    if (user) supabase.from("bets").select("*").then(({ data }) => setBets(data ?? []));
+    if (!loading && !user) nav({ to: "/login" });
+  }, [loading, user, nav]);
+  useEffect(() => {
+    if (user)
+      supabase
+        .from("bets")
+        .select("*")
+        .then(({ data }) => setBets(data ?? []));
   }, [user]);
 
   const filtered = useMemo(() => {
@@ -63,21 +78,29 @@ function Dashboard() {
     saldo: +v.toFixed(2),
   }));
 
-  const years = Array.from(new Set(bets.map((b) => new Date(b.date + "T00:00:00").getFullYear()))).sort((a, b) => b - a);
+  const years = Array.from(
+    new Set(bets.map((b) => new Date(b.date + "T00:00:00").getFullYear())),
+  ).sort((a, b) => b - a);
   if (!years.includes(now.getFullYear())) years.unshift(now.getFullYear());
 
   return (
     <div className="min-h-screen pb-12">
       <header className="sticky top-0 z-10 bg-[#060b14]/90 backdrop-blur border-b border-border">
         <div className="max-w-[500px] mx-auto px-4 py-3 flex items-center gap-3">
-          <Link to="/" className="text-muted-foreground hover:text-foreground"><ArrowLeft className="w-4 h-4" /></Link>
+          <Link to="/" className="text-muted-foreground hover:text-foreground">
+            <ArrowLeft className="w-4 h-4" />
+          </Link>
           <div className="font-bold">Dashboard</div>
         </div>
       </header>
 
       <main className="max-w-[500px] mx-auto px-4 py-4 space-y-4">
         <div className="relative h-44 rounded-2xl overflow-hidden border border-border">
-          <img src={heroImg} alt="Dashboard" className="absolute inset-0 w-full h-full object-cover" />
+          <img
+            src={heroImg}
+            alt="Dashboard"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-[#060b14] via-[#060b14]/40 to-transparent" />
           <div className="absolute inset-0 flex flex-col justify-end p-4">
             <div className="text-[10px] uppercase tracking-[0.3em] text-white/70">Performance</div>
@@ -94,7 +117,11 @@ function Dashboard() {
               {years.map((y) => (
                 <button
                   key={y}
-                  onClick={() => { setYear(y); setFrom(""); setTo(""); }}
+                  onClick={() => {
+                    setYear(y);
+                    setFrom("");
+                    setTo("");
+                  }}
                   className={`px-3 py-1 rounded-md text-sm font-bold border ${year === y && !from && !to ? "border-primary bg-primary/20 text-primary" : "border-border text-muted-foreground"}`}
                 >
                   {y}
@@ -113,7 +140,13 @@ function Dashboard() {
             </div>
           </div>
           {(from || to) && (
-            <button onClick={() => { setFrom(""); setTo(""); }} className="text-xs text-muted-foreground underline">
+            <button
+              onClick={() => {
+                setFrom("");
+                setTo("");
+              }}
+              className="text-xs text-muted-foreground underline"
+            >
               Limpar período
             </button>
           )}
@@ -138,7 +171,9 @@ function Dashboard() {
         <div className="bg-card border border-border rounded-xl p-3 text-[1.2em]">
           <h3 className="text-sm font-bold uppercase text-muted-foreground mb-2">Saldo por mês</h3>
           {chartData.length === 0 ? (
-            <div className="text-center text-muted-foreground py-8 text-sm">Sem dados no período</div>
+            <div className="text-center text-muted-foreground py-8 text-sm">
+              Sem dados no período
+            </div>
           ) : (
             <div className="h-56">
               <ResponsiveContainer width="100%" height="100%">
@@ -147,7 +182,11 @@ function Dashboard() {
                   <XAxis dataKey="mes" stroke="#94a3b8" fontSize={11} />
                   <YAxis stroke="#94a3b8" fontSize={11} />
                   <Tooltip
-                    contentStyle={{ background: "#0f1218", border: "1px solid #1f2937", borderRadius: 8 }}
+                    contentStyle={{
+                      background: "#0f1218",
+                      border: "1px solid #1f2937",
+                      borderRadius: 8,
+                    }}
                     formatter={(v: number) => brl(v)}
                   />
                   <Bar dataKey="saldo" radius={[6, 6, 0, 0]}>
@@ -163,20 +202,38 @@ function Dashboard() {
 
         <h3 className="text-sm font-bold uppercase text-muted-foreground pt-2">Detalhe mensal</h3>
         <div className="space-y-2">
-          {monthly.slice().reverse().map(([k, v]) => (
-            <div key={k} className={`flex justify-between p-3 rounded-xl border-2 text-[1.2em] ${v >= 0 ? "border-win text-win" : "border-loss text-loss"}`}>
-              <span className="font-semibold">{monthLabel(k)}</span>
-              <span className="font-bold">{brl(v)}</span>
-            </div>
-          ))}
-          {monthly.length === 0 && <div className="text-center text-muted-foreground py-4 text-sm">Sem dados</div>}
+          {monthly
+            .slice()
+            .reverse()
+            .map(([k, v]) => (
+              <div
+                key={k}
+                className={`flex justify-between p-3 rounded-xl border-2 text-[1.2em] ${v >= 0 ? "border-win text-win" : "border-loss text-loss"}`}
+              >
+                <span className="font-semibold">{monthLabel(k)}</span>
+                <span className="font-bold">{brl(v)}</span>
+              </div>
+            ))}
+          {monthly.length === 0 && (
+            <div className="text-center text-muted-foreground py-4 text-sm">Sem dados</div>
+          )}
         </div>
       </main>
     </div>
   );
 }
 
-function Card({ label, value, sub, tone }: { label: string; value: string; sub?: string; tone?: "win" | "loss" }) {
+function Card({
+  label,
+  value,
+  sub,
+  tone,
+}: {
+  label: string;
+  value: string;
+  sub?: string;
+  tone?: "win" | "loss";
+}) {
   const color = tone === "win" ? "text-win" : tone === "loss" ? "text-loss" : "";
   return (
     <div className="bg-card border border-border rounded-xl p-3 text-[1.2em]">

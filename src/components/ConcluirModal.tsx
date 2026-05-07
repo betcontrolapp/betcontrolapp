@@ -78,7 +78,9 @@ export function ConcluirModal({
           </div>
           <Button
             className="w-full font-bold"
-            onClick={() => onConfirm(status, status === "ganhou" ? retorno : Math.max(0, investido - perda))}
+            onClick={() =>
+              onConfirm(status, status === "ganhou" ? retorno : Math.max(0, investido - perda))
+            }
           >
             CONFIRMAR RESULTADO
           </Button>

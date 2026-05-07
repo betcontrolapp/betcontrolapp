@@ -11,7 +11,12 @@ import {
 } from "@/server/admin.functions";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
-  Table, TableHeader, TableBody, TableRow, TableHead, TableCell,
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
 } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -53,8 +58,14 @@ function AdminPage() {
 
   useEffect(() => {
     if (loading) return;
-    if (!user) { nav({ to: "/login" }); return; }
-    if (user.email !== ADMIN_EMAIL) { nav({ to: "/" }); return; }
+    if (!user) {
+      nav({ to: "/login" });
+      return;
+    }
+    if (user.email !== ADMIN_EMAIL) {
+      nav({ to: "/" });
+      return;
+    }
     reload();
   }, [user, loading]);
 
@@ -105,14 +116,19 @@ function AdminPage() {
     try {
       await createUserFn({ data: { token: await getToken(), email: newEmail, password: newPwd } });
       toast.success("Usuário criado");
-      setNewUserOpen(false); setNewEmail(""); setNewPwd("");
+      setNewUserOpen(false);
+      setNewEmail("");
+      setNewPwd("");
       reload();
-    } catch (e: any) { toast.error(e?.message ?? "Erro"); }
+    } catch (e: any) {
+      toast.error(e?.message ?? "Erro");
+    }
   };
 
   const submitLic = async () => {
     if (!licEdit?.user_id || !licEdit?.plan || !licEdit?.expires_at) {
-      toast.error("Preencha todos os campos"); return;
+      toast.error("Preencha todos os campos");
+      return;
     }
     try {
       await upsertFn({
@@ -126,20 +142,29 @@ function AdminPage() {
         },
       });
       toast.success("Salvo");
-      setLicOpen(false); setLicEdit(null);
+      setLicOpen(false);
+      setLicEdit(null);
       reload();
-    } catch (e: any) { toast.error(e?.message ?? "Erro"); }
+    } catch (e: any) {
+      toast.error(e?.message ?? "Erro");
+    }
   };
 
   const toggleLic = async (l: Lic) => {
     try {
       await toggleFn({ data: { token: await getToken(), id: l.id, active: !l.active } });
       reload();
-    } catch (e: any) { toast.error(e?.message ?? "Erro"); }
+    } catch (e: any) {
+      toast.error(e?.message ?? "Erro");
+    }
   };
 
   if (loading || busy) {
-    return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Carregando...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center text-muted-foreground">
+        Carregando...
+      </div>
+    );
   }
 
   return (
@@ -147,7 +172,9 @@ function AdminPage() {
       <header className="sticky top-0 z-10 bg-[#060b14]/90 backdrop-blur border-b border-border">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="font-bold tracking-wide">⚙️ ADMIN</div>
-          <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">Voltar</Link>
+          <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
+            Voltar
+          </Link>
         </div>
       </header>
 
@@ -182,11 +209,17 @@ function AdminPage() {
                         <TableCell>{u.email}</TableCell>
                         <TableCell>{new Date(u.created_at).toLocaleDateString("pt-BR")}</TableCell>
                         <TableCell>
-                          {!l ? <Badge variant="outline">Sem licença</Badge>
-                            : valid ? <Badge>Ativa</Badge>
-                              : <Badge variant="destructive">Expirada</Badge>}
+                          {!l ? (
+                            <Badge variant="outline">Sem licença</Badge>
+                          ) : valid ? (
+                            <Badge>Ativa</Badge>
+                          ) : (
+                            <Badge variant="destructive">Expirada</Badge>
+                          )}
                         </TableCell>
-                        <TableCell>{l ? new Date(l.expires_at).toLocaleDateString("pt-BR") : "-"}</TableCell>
+                        <TableCell>
+                          {l ? new Date(l.expires_at).toLocaleDateString("pt-BR") : "-"}
+                        </TableCell>
                       </TableRow>
                     );
                   })}
@@ -197,7 +230,12 @@ function AdminPage() {
 
           <TabsContent value="licenses">
             <div className="flex justify-end mb-3">
-              <Button onClick={() => { setLicEdit({ active: true, plan: "monthly" }); setLicOpen(true); }}>
+              <Button
+                onClick={() => {
+                  setLicEdit({ active: true, plan: "monthly" });
+                  setLicOpen(true);
+                }}
+              >
                 + Nova licença
               </Button>
             </div>
@@ -227,14 +265,22 @@ function AdminPage() {
                       </TableCell>
                       <TableCell>{new Date(l.expires_at).toLocaleDateString("pt-BR")}</TableCell>
                       <TableCell>
-                        <Button variant="outline" size="sm" onClick={() => {
-                          setLicEdit({
-                            id: l.id, user_id: l.user_id, plan: l.plan,
-                            active: l.active,
-                            expires_at: l.expires_at.slice(0, 10),
-                          });
-                          setLicOpen(true);
-                        }}>Editar</Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setLicEdit({
+                              id: l.id,
+                              user_id: l.user_id,
+                              plan: l.plan,
+                              active: l.active,
+                              expires_at: l.expires_at.slice(0, 10),
+                            });
+                            setLicOpen(true);
+                          }}
+                        >
+                          Editar
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -261,7 +307,9 @@ function AdminPage() {
                   {stats.soon.map((l) => (
                     <li key={l.id} className="flex justify-between">
                       <span>{userById[l.user_id]?.email ?? l.user_id}</span>
-                      <span className="text-yellow-400">{new Date(l.expires_at).toLocaleDateString("pt-BR")}</span>
+                      <span className="text-yellow-400">
+                        {new Date(l.expires_at).toLocaleDateString("pt-BR")}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -273,16 +321,35 @@ function AdminPage() {
 
       <Dialog open={newUserOpen} onOpenChange={setNewUserOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Novo usuário</DialogTitle></DialogHeader>
-          <Input placeholder="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} />
-          <Input placeholder="senha" type="password" value={newPwd} onChange={(e) => setNewPwd(e.target.value)} />
+          <DialogHeader>
+            <DialogTitle>Novo usuário</DialogTitle>
+          </DialogHeader>
+          <Input
+            placeholder="email"
+            value={newEmail}
+            onChange={(e) => setNewEmail(e.target.value)}
+          />
+          <Input
+            placeholder="senha"
+            type="password"
+            value={newPwd}
+            onChange={(e) => setNewPwd(e.target.value)}
+          />
           <Button onClick={submitNewUser}>Criar</Button>
         </DialogContent>
       </Dialog>
 
-      <Dialog open={licOpen} onOpenChange={(v) => { setLicOpen(v); if (!v) setLicEdit(null); }}>
+      <Dialog
+        open={licOpen}
+        onOpenChange={(v) => {
+          setLicOpen(v);
+          if (!v) setLicEdit(null);
+        }}
+      >
         <DialogContent>
-          <DialogHeader><DialogTitle>{licEdit?.id ? "Editar licença" : "Nova licença"}</DialogTitle></DialogHeader>
+          <DialogHeader>
+            <DialogTitle>{licEdit?.id ? "Editar licença" : "Nova licença"}</DialogTitle>
+          </DialogHeader>
           <label className="text-xs text-muted-foreground">Usuário</label>
           <select
             className="bg-background border border-input rounded-md h-9 px-2"
@@ -291,7 +358,11 @@ function AdminPage() {
             disabled={!!licEdit?.id}
           >
             <option value="">Selecione...</option>
-            {users.map((u) => <option key={u.id} value={u.id}>{u.email}</option>)}
+            {users.map((u) => (
+              <option key={u.id} value={u.id}>
+                {u.email}
+              </option>
+            ))}
           </select>
           <label className="text-xs text-muted-foreground">Plano</label>
           <select
@@ -324,10 +395,21 @@ function AdminPage() {
   );
 }
 
-function StatCard({ label, value, color }: { label: string; value: number; color: "blue" | "red" | "yellow" }) {
-  const cls = color === "red" ? "border-loss text-loss"
-    : color === "yellow" ? "border-yellow-500 text-yellow-400"
-      : "border-primary text-primary";
+function StatCard({
+  label,
+  value,
+  color,
+}: {
+  label: string;
+  value: number;
+  color: "blue" | "red" | "yellow";
+}) {
+  const cls =
+    color === "red"
+      ? "border-loss text-loss"
+      : color === "yellow"
+        ? "border-yellow-500 text-yellow-400"
+        : "border-primary text-primary";
   return (
     <div className={`rounded-xl border-2 p-4 text-[1.2em] ${cls}`}>
       <div className="text-xs uppercase opacity-80">{label}</div>

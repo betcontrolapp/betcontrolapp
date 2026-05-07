@@ -28,7 +28,8 @@ function LoginPage() {
       if (mode === "register") {
         if (password !== confirm) throw new Error("Senhas não coincidem");
         const { error } = await supabase.auth.signUp({
-          email, password,
+          email,
+          password,
           options: { emailRedirectTo: window.location.origin },
         });
         if (error) throw error;
@@ -54,10 +55,29 @@ function LoginPage() {
           <div className="text-xs text-muted-foreground mt-1">PRO</div>
         </div>
         <form onSubmit={submit} className="space-y-3">
-          <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <Input type="password" placeholder="Senha" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+          <Input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <Input
+            type="password"
+            placeholder="Senha"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            minLength={6}
+          />
           {mode === "register" && (
-            <Input type="password" placeholder="Confirmar senha" value={confirm} onChange={(e) => setConfirm(e.target.value)} required />
+            <Input
+              type="password"
+              placeholder="Confirmar senha"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              required
+            />
           )}
           <Button type="submit" className="w-full font-bold" disabled={loading}>
             {mode === "login" ? "ENTRAR" : "CRIAR CONTA"}
