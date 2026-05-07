@@ -32,10 +32,10 @@ export function ConcluirModal({
             <div className="text-sm text-muted-foreground">Apostado: {brl(Number(bet.investido))}</div>
           </div>
           <div className="grid grid-cols-2 gap-2">
-            <button onClick={() => setStatus("ganhou")} className={`py-4 rounded-md border-2 font-bold ${status === "ganhou" ? "border-win bg-win-bg text-win" : "border-border"}`}>
+            <button onClick={() => { setStatus("ganhou"); setRetorno(Number(bet.investido) * 2); }} className={`py-4 rounded-md border-2 font-bold ${status === "ganhou" ? "border-win bg-win-bg text-win" : "border-border"}`}>
               ✅ Ganhou
             </button>
-            <button onClick={() => setStatus("perdeu")} className={`py-4 rounded-md border-2 font-bold ${status === "perdeu" ? "border-loss bg-loss-bg text-loss" : "border-border"}`}>
+            <button onClick={() => { setStatus("perdeu"); setRetorno(0); }} className={`py-4 rounded-md border-2 font-bold ${status === "perdeu" ? "border-loss bg-loss-bg text-loss" : "border-border"}`}>
               ❌ Perdeu
             </button>
           </div>
