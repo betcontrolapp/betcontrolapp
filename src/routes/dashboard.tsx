@@ -87,7 +87,7 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="bg-card border border-border rounded-xl p-3 space-y-3">
+        <div className="bg-card border border-border rounded-xl p-3 space-y-3 text-[1.2em]">
           <div>
             <div className="text-[10px] uppercase text-muted-foreground mb-1">Ano</div>
             <div className="flex flex-wrap gap-2">
@@ -135,7 +135,7 @@ function Dashboard() {
           />
         </div>
 
-        <div className="bg-card border border-border rounded-xl p-3">
+        <div className="bg-card border border-border rounded-xl p-3 text-[1.2em]">
           <h3 className="text-sm font-bold uppercase text-muted-foreground mb-2">Saldo por mês</h3>
           {chartData.length === 0 ? (
             <div className="text-center text-muted-foreground py-8 text-sm">Sem dados no período</div>
@@ -164,7 +164,7 @@ function Dashboard() {
         <h3 className="text-sm font-bold uppercase text-muted-foreground pt-2">Detalhe mensal</h3>
         <div className="space-y-2">
           {monthly.slice().reverse().map(([k, v]) => (
-            <div key={k} className={`flex justify-between p-3 rounded-xl border-2 ${v >= 0 ? "border-win text-win" : "border-loss text-loss"}`}>
+            <div key={k} className={`flex justify-between p-3 rounded-xl border-2 text-[1.2em] ${v >= 0 ? "border-win text-win" : "border-loss text-loss"}`}>
               <span className="font-semibold">{monthLabel(k)}</span>
               <span className="font-bold">{brl(v)}</span>
             </div>
@@ -179,7 +179,7 @@ function Dashboard() {
 function Card({ label, value, sub, tone }: { label: string; value: string; sub?: string; tone?: "win" | "loss" }) {
   const color = tone === "win" ? "text-win" : tone === "loss" ? "text-loss" : "";
   return (
-    <div className="bg-card border border-border rounded-xl p-3">
+    <div className="bg-card border border-border rounded-xl p-3 text-[1.2em]">
       <div className="text-[10px] uppercase text-muted-foreground">{label}</div>
       <div className={`font-bold text-lg ${color}`}>{value}</div>
       {sub && <div className="text-xs text-muted-foreground">{sub}</div>}
