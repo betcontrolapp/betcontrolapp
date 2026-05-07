@@ -48,12 +48,12 @@ export function BetModal({
   const [saving, setSaving] = useState(false);
   const [calOpen, setCalOpen] = useState(false);
 
-  const lucro = data.status === "ganhou" ? data.retorno - data.investido : data.status === "perdeu" ? -data.investido : 0;
+  const lucro = data.status !== "pendente" ? data.retorno - data.investido : 0;
   const dateObj = new Date(data.date + "T00:00:00");
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-card max-w-md">
+      <DialogContent className="bg-card max-w-md text-[1.2em]">
         <DialogHeader>
           <DialogTitle>{initial?.id ? "Editar Aposta" : "Nova Aposta"}</DialogTitle>
         </DialogHeader>
@@ -87,7 +87,10 @@ export function BetModal({
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className={cn("w-full justify-start text-left font-normal mt-1", !data.date && "text-muted-foreground")}
+                  className={cn(
+                    "w-full justify-start text-left font-normal mt-1",
+                    !data.date && "text-muted-foreground",
+                  )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {data.date ? format(dateObj, "PPP", { locale: ptBR }) : "Escolher data"}
@@ -118,12 +121,20 @@ export function BetModal({
                 <button
                   key={s}
                   type="button"
-                  onClick={() => setData({ ...data, status: s, retorno: s === "ganhou" ? data.retorno || data.investido * 2 : 0 })}
+                  onClick={() =>
+                    setData({
+                      ...data,
+                      status: s,
+                      retorno: s === "ganhou" ? data.retorno || data.investido * 2 : 0,
+                    })
+                  }
                   className={`py-2 rounded-md border text-sm font-semibold ${
                     data.status === s
-                      ? s === "pendente" ? "border-pending bg-pending-bg text-pending"
-                      : s === "ganhou" ? "border-win bg-win-bg text-win"
-                      : "border-loss bg-loss-bg text-loss"
+                      ? s === "pendente"
+                        ? "border-pending bg-pending-bg text-pending"
+                        : s === "ganhou"
+                          ? "border-win bg-win-bg text-win"
+                          : "border-loss bg-loss-bg text-loss"
                       : "border-border text-muted-foreground"
                   }`}
                 >
@@ -132,13 +143,32 @@ export function BetModal({
               ))}
             </div>
           </div>
-          <Stepper label="Apostou" value={data.investido} onChange={(v) => setData({ ...data, investido: v })} />
+          <Stepper
+            label="Apostou"
+            value={data.investido}
+            onChange={(v) => setData({ ...data, investido: v })}
+          />
           {data.status === "ganhou" && (
-            <Stepper label="Recebeu" value={data.retorno} onChange={(v) => setData({ ...data, retorno: v })} />
+            <Stepper
+              label="Recebeu"
+              value={data.retorno}
+              onChange={(v) => setData({ ...data, retorno: v })}
+            />
+          )}
+          {data.status === "perdeu" && (
+            <Stepper
+              label="Perdeu"
+              value={Math.max(0, data.investido - data.retorno)}
+              max={data.investido}
+              onChange={(v) => setData({ ...data, retorno: Math.max(0, data.investido - v) })}
+            />
           )}
           {data.status !== "pendente" && (
-            <div className={`text-center p-3 rounded-md font-bold text-lg ${lucro >= 0 ? "bg-win-bg text-win" : "bg-loss-bg text-loss"}`}>
-              {lucro >= 0 ? "Lucro " : "Perda "}{brl(lucro)}
+            <div
+              className={`text-center p-3 rounded-md font-bold text-lg ${lucro >= 0 ? "bg-win-bg text-win" : "bg-loss-bg text-loss"}`}
+            >
+              {lucro >= 0 ? "Lucro " : "Perda "}
+              {brl(lucro)}
             </div>
           )}
           <Button

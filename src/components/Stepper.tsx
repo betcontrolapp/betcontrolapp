@@ -4,12 +4,17 @@ export function Stepper({
   label,
   value,
   onChange,
+  max,
 }: {
   label: string;
   value: number;
   onChange: (v: number) => void;
+  max?: number;
 }) {
-  const set = (delta: number) => onChange(Math.max(0, +(value + delta).toFixed(2)));
+  const set = (delta: number) => {
+    const next = Math.max(0, +(value + delta).toFixed(2));
+    onChange(max === undefined ? next : Math.min(max, next));
+  };
   const base =
     "px-2 py-1.5 rounded-md text-xs font-extrabold select-none " +
     "bg-gradient-to-b from-zinc-300 to-zinc-500 " +
@@ -22,11 +27,19 @@ export function Stepper({
     <div>
       <label className="text-xs text-muted-foreground">{label}</label>
       <div className="flex items-center gap-1 mt-1 bg-secondary/50 p-2 rounded-md">
-        <button type="button" onClick={() => set(-10)} className={minus}>−10</button>
-        <button type="button" onClick={() => set(-1)} className={minus}>−1</button>
+        <button type="button" onClick={() => set(-10)} className={minus}>
+          −10
+        </button>
+        <button type="button" onClick={() => set(-1)} className={minus}>
+          −1
+        </button>
         <div className="flex-1 text-center font-bold text-lg">{brl(value)}</div>
-        <button type="button" onClick={() => set(1)} className={plus}>+1</button>
-        <button type="button" onClick={() => set(10)} className={plus}>+10</button>
+        <button type="button" onClick={() => set(1)} className={plus}>
+          +1
+        </button>
+        <button type="button" onClick={() => set(10)} className={plus}>
+          +10
+        </button>
       </div>
     </div>
   );

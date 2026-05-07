@@ -16,19 +16,23 @@ export function ConcluirModal({
 }) {
   const [status, setStatus] = useState<"ganhou" | "perdeu">("ganhou");
   const [retorno, setRetorno] = useState(0);
+  const [perda, setPerda] = useState(0);
 
   useEffect(() => {
     if (!bet) return;
     setStatus("ganhou");
-    setRetorno(Number(bet.investido) * 2);
+    const investido = Number(bet.investido);
+    setRetorno(investido * 2);
+    setPerda(investido);
   }, [bet]);
 
   if (!bet) return null;
-  const lucro = status === "ganhou" ? retorno - Number(bet.investido) : -Number(bet.investido);
+  const investido = Number(bet.investido);
+  const lucro = status === "ganhou" ? retorno - investido : -perda;
 
   return (
     <Dialog open={!!bet} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-card max-w-md">
+      <DialogContent className="bg-card max-w-md text-[1.2em]">
         <DialogHeader>
           <DialogTitle>Concluir aposta</DialogTitle>
         </DialogHeader>
@@ -45,7 +49,7 @@ export function ConcluirModal({
             <button
               onClick={() => {
                 setStatus("ganhou");
-                setRetorno(Number(bet.investido) * 2);
+                setRetorno(investido * 2);
               }}
               className={`py-4 rounded-md border-2 font-bold ${status === "ganhou" ? "border-win bg-win-bg text-win" : "border-border"}`}
             >
@@ -54,14 +58,18 @@ export function ConcluirModal({
             <button
               onClick={() => {
                 setStatus("perdeu");
-                setRetorno(0);
+                setPerda(investido);
               }}
               className={`py-4 rounded-md border-2 font-bold ${status === "perdeu" ? "border-loss bg-loss-bg text-loss" : "border-border"}`}
             >
               ❌ Perdeu
             </button>
           </div>
-          {status === "ganhou" && <Stepper label="Recebeu" value={retorno} onChange={setRetorno} />}
+          {status === "ganhou" ? (
+            <Stepper label="Recebeu" value={retorno} onChange={setRetorno} />
+          ) : (
+            <Stepper label="Perdeu" value={perda} onChange={setPerda} max={investido} />
+          )}
           <div
             className={`text-center p-3 rounded-md font-bold text-lg ${lucro >= 0 ? "bg-win-bg text-win" : "bg-loss-bg text-loss"}`}
           >
@@ -70,7 +78,9 @@ export function ConcluirModal({
           </div>
           <Button
             className="w-full font-bold"
-            onClick={() => onConfirm(status, status === "ganhou" ? retorno : 0)}
+            onClick={() =>
+              onConfirm(status, status === "ganhou" ? retorno : Math.max(0, investido - perda))
+            }
           >
             CONFIRMAR RESULTADO
           </Button>

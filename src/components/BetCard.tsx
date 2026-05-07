@@ -31,10 +31,10 @@ export function BetCard({
   const investido = Number(bet.investido);
   const retorno = Number(bet.retorno);
   const status = bet.status as keyof typeof STATUS_STYLES;
-  const lucro = status === "ganhou" ? retorno - investido : status === "perdeu" ? -investido : 0;
+  const lucro = status !== "pendente" ? retorno - investido : 0;
 
   return (
-    <div className={`rounded-xl border-2 ${STATUS_STYLES[status]} overflow-hidden text-[1.38em]`}>
+    <div className={`rounded-xl border-2 ${STATUS_STYLES[status]} overflow-hidden text-[1.66em]`}>
       <div className="p-4 space-y-3">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
@@ -59,7 +59,8 @@ export function BetCard({
 
         {status !== "pendente" && (
           <div className={`text-center font-bold ${lucro >= 0 ? "text-win" : "text-loss"}`}>
-            {lucro >= 0 ? "Lucro " : "Perda "}{brl(lucro)}
+            {lucro >= 0 ? "Lucro " : "Perda "}
+            {brl(lucro)}
           </div>
         )}
 
@@ -68,18 +69,35 @@ export function BetCard({
           {status === "ganhou" && (
             <Stepper label="Recebeu" value={retorno} onChange={(v) => onUpdate({ retorno: v })} />
           )}
+          {status === "perdeu" && (
+            <Stepper
+              label="Perdeu"
+              value={Math.max(0, investido - retorno)}
+              max={investido}
+              onChange={(v) => onUpdate({ retorno: Math.max(0, investido - v) })}
+            />
+          )}
         </div>
       </div>
 
       <div className="border-t border-border grid grid-cols-3 divide-x divide-border">
-        <button onClick={onDelete} className="py-3 text-sm text-loss hover:bg-loss/10 flex items-center justify-center gap-1">
+        <button
+          onClick={onDelete}
+          className="py-3 text-sm text-loss hover:bg-loss/10 flex items-center justify-center gap-1"
+        >
           <Trash2 className="w-4 h-4" /> Excluir
         </button>
-        <button onClick={onEdit} className="py-3 text-sm hover:bg-accent flex items-center justify-center gap-1">
+        <button
+          onClick={onEdit}
+          className="py-3 text-sm hover:bg-accent flex items-center justify-center gap-1"
+        >
           <Pencil className="w-4 h-4" /> Editar
         </button>
         {status === "pendente" ? (
-          <button onClick={onConcluir} className="py-3 text-sm text-win hover:bg-win/10 flex items-center justify-center gap-1">
+          <button
+            onClick={onConcluir}
+            className="py-3 text-sm text-win hover:bg-win/10 flex items-center justify-center gap-1"
+          >
             <Check className="w-4 h-4" /> Concluir
           </button>
         ) : (
