@@ -163,7 +163,7 @@ function AdminPage() {
             <div className="flex justify-end mb-3">
               <Button onClick={() => setNewUserOpen(true)}>+ Criar usuário</Button>
             </div>
-            <div className="rounded-xl border border-border overflow-hidden">
+            <div className="rounded-xl border border-border overflow-hidden text-[1.2em]">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -201,7 +201,7 @@ function AdminPage() {
                 + Nova licença
               </Button>
             </div>
-            <div className="rounded-xl border border-border overflow-hidden">
+            <div className="rounded-xl border border-border overflow-hidden text-[1.2em]">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -252,7 +252,7 @@ function AdminPage() {
               <StatCard label="Anuais" value={stats.annual} color="blue" />
               <StatCard label="Vitalícias" value={stats.lifetime} color="blue" />
             </div>
-            <div className="mt-6 rounded-xl border-2 border-yellow-500/60 p-4">
+            <div className="mt-6 rounded-xl border-2 border-yellow-500/60 p-4 text-[1.2em]">
               <h3 className="font-bold mb-2 text-yellow-400">Vencem nos próximos 30 dias</h3>
               {stats.soon.length === 0 ? (
                 <p className="text-sm text-muted-foreground">Nenhum.</p>
@@ -329,7 +329,7 @@ function StatCard({ label, value, color }: { label: string; value: number; color
     : color === "yellow" ? "border-yellow-500 text-yellow-400"
       : "border-primary text-primary";
   return (
-    <div className={`rounded-xl border-2 p-4 ${cls}`}>
+    <div className={`rounded-xl border-2 p-4 text-[1.2em] ${cls}`}>
       <div className="text-xs uppercase opacity-80">{label}</div>
       <div className="font-bold text-3xl">{value}</div>
     </div>
