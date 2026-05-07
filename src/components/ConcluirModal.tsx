@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Stepper } from "./Stepper";
@@ -15,7 +15,13 @@ export function ConcluirModal({
   onConfirm: (status: "ganhou" | "perdeu", retorno: number) => Promise<void>;
 }) {
   const [status, setStatus] = useState<"ganhou" | "perdeu">("ganhou");
-  const [retorno, setRetorno] = useState(bet ? Number(bet.investido) * 2 : 0);
+  const [retorno, setRetorno] = useState(0);
+
+  useEffect(() => {
+    if (!bet) return;
+    setStatus("ganhou");
+    setRetorno(Number(bet.investido) * 2);
+  }, [bet]);
 
   if (!bet) return null;
   const lucro = status === "ganhou" ? retorno - Number(bet.investido) : -Number(bet.investido);
@@ -28,22 +34,44 @@ export function ConcluirModal({
         </DialogHeader>
         <div className="space-y-4">
           <div className="bg-secondary/50 p-3 rounded-md">
-            <div className="font-semibold">{bet.esporte} {bet.descricao}</div>
-            <div className="text-sm text-muted-foreground">Apostado: {brl(Number(bet.investido))}</div>
+            <div className="font-semibold">
+              {bet.esporte} {bet.descricao}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              Apostado: {brl(Number(bet.investido))}
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-2">
-            <button onClick={() => { setStatus("ganhou"); setRetorno(Number(bet.investido) * 2); }} className={`py-4 rounded-md border-2 font-bold ${status === "ganhou" ? "border-win bg-win-bg text-win" : "border-border"}`}>
+            <button
+              onClick={() => {
+                setStatus("ganhou");
+                setRetorno(Number(bet.investido) * 2);
+              }}
+              className={`py-4 rounded-md border-2 font-bold ${status === "ganhou" ? "border-win bg-win-bg text-win" : "border-border"}`}
+            >
               ✅ Ganhou
             </button>
-            <button onClick={() => { setStatus("perdeu"); setRetorno(0); }} className={`py-4 rounded-md border-2 font-bold ${status === "perdeu" ? "border-loss bg-loss-bg text-loss" : "border-border"}`}>
+            <button
+              onClick={() => {
+                setStatus("perdeu");
+                setRetorno(0);
+              }}
+              className={`py-4 rounded-md border-2 font-bold ${status === "perdeu" ? "border-loss bg-loss-bg text-loss" : "border-border"}`}
+            >
               ❌ Perdeu
             </button>
           </div>
           {status === "ganhou" && <Stepper label="Recebeu" value={retorno} onChange={setRetorno} />}
-          <div className={`text-center p-3 rounded-md font-bold text-lg ${lucro >= 0 ? "bg-win-bg text-win" : "bg-loss-bg text-loss"}`}>
-            {lucro >= 0 ? "Lucro " : "Perda "}{brl(lucro)}
+          <div
+            className={`text-center p-3 rounded-md font-bold text-lg ${lucro >= 0 ? "bg-win-bg text-win" : "bg-loss-bg text-loss"}`}
+          >
+            {lucro >= 0 ? "Lucro " : "Perda "}
+            {brl(lucro)}
           </div>
-          <Button className="w-full font-bold" onClick={() => onConfirm(status, status === "ganhou" ? retorno : 0)}>
+          <Button
+            className="w-full font-bold"
+            onClick={() => onConfirm(status, status === "ganhou" ? retorno : 0)}
+          >
             CONFIRMAR RESULTADO
           </Button>
         </div>
