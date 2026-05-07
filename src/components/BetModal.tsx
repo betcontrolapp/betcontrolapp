@@ -48,12 +48,12 @@ export function BetModal({
   const [saving, setSaving] = useState(false);
   const [calOpen, setCalOpen] = useState(false);
 
-  const lucro = data.status === "ganhou" ? data.retorno - data.investido : data.status === "perdeu" ? -data.investido : 0;
+  const lucro = data.status !== "pendente" ? data.retorno - data.investido : 0;
   const dateObj = new Date(data.date + "T00:00:00");
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-card max-w-md">
+      <DialogContent className="bg-card max-w-md text-[1.2em]">
         <DialogHeader>
           <DialogTitle>{initial?.id ? "Editar Aposta" : "Nova Aposta"}</DialogTitle>
         </DialogHeader>
@@ -136,9 +136,18 @@ export function BetModal({
           {data.status === "ganhou" && (
             <Stepper label="Recebeu" value={data.retorno} onChange={(v) => setData({ ...data, retorno: v })} />
           )}
+          {data.status === "perdeu" && (
+            <Stepper
+              label="Perdeu"
+              value={Math.max(0, data.investido - data.retorno)}
+              max={data.investido}
+              onChange={(v) => setData({ ...data, retorno: Math.max(0, data.investido - v) })}
+            />
+          )}
           {data.status !== "pendente" && (
             <div className={`text-center p-3 rounded-md font-bold text-lg ${lucro >= 0 ? "bg-win-bg text-win" : "bg-loss-bg text-loss"}`}>
-              {lucro >= 0 ? "Lucro " : "Perda "}{brl(lucro)}
+              {lucro >= 0 ? "Lucro " : "Perda "}
+              {brl(lucro)}
             </div>
           )}
           <Button
