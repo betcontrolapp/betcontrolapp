@@ -399,6 +399,7 @@ function AdminPage() {
             </div>
           </TabsContent>
 
+          <TabsContent value="dashboard">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               <StatCard label="Usuários" value={stats.totalUsers} color="blue" />
               <StatCard label="Licenças ativas" value={stats.active} color="blue" />
