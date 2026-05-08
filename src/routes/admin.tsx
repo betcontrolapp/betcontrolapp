@@ -501,6 +501,26 @@ function AdminPage() {
           <Button onClick={submitLic}>Salvar</Button>
         </DialogContent>
       </Dialog>
+
+      <Dialog
+        open={teamOpen}
+        onOpenChange={(v) => {
+          setTeamOpen(v);
+          if (!v) setTeamEdit({ name: "" });
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{teamEdit.id ? "Editar time" : "Novo time"}</DialogTitle>
+          </DialogHeader>
+          <Input
+            placeholder="Nome do time"
+            value={teamEdit.name}
+            onChange={(e) => setTeamEdit({ ...teamEdit, name: e.target.value })}
+          />
+          <Button onClick={submitTeam}>Salvar</Button>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
