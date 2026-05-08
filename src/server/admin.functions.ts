@@ -73,3 +73,45 @@ export const adminToggleLicense = createServerFn({ method: "POST" })
     if (error) throw new Response(error.message, { status: 400 });
     return { ok: true };
   });
+
+export const adminListTeams = createServerFn({ method: "POST" })
+  .inputValidator((d: { token: string }) => d)
+  .handler(async ({ data }) => {
+    await assertAdmin(data.token);
+    const { data: teams, error } = await supabaseAdmin
+      .from("teams")
+      .select("*")
+      .order("name");
+    if (error) throw new Response(error.message, { status: 500 });
+    return { teams: teams ?? [] };
+  });
+
+export const adminCreateTeam = createServerFn({ method: "POST" })
+  .inputValidator((d: { token: string; name: string }) => d)
+  .handler(async ({ data }) => {
+    await assertAdmin(data.token);
+    const { error } = await supabaseAdmin.from("teams").insert({ name: data.name.trim() });
+    if (error) throw new Response(error.message, { status: 400 });
+    return { ok: true };
+  });
+
+export const adminUpdateTeam = createServerFn({ method: "POST" })
+  .inputValidator((d: { token: string; id: string; name: string }) => d)
+  .handler(async ({ data }) => {
+    await assertAdmin(data.token);
+    const { error } = await supabaseAdmin
+      .from("teams")
+      .update({ name: data.name.trim() })
+      .eq("id", data.id);
+    if (error) throw new Response(error.message, { status: 400 });
+    return { ok: true };
+  });
+
+export const adminDeleteTeam = createServerFn({ method: "POST" })
+  .inputValidator((d: { token: string; id: string }) => d)
+  .handler(async ({ data }) => {
+    await assertAdmin(data.token);
+    const { error } = await supabaseAdmin.from("teams").delete().eq("id", data.id);
+    if (error) throw new Response(error.message, { status: 400 });
+    return { ok: true };
+  });
