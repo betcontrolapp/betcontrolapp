@@ -91,13 +91,46 @@ function AdminPage() {
     setBusy(true);
     try {
       const token = await getToken();
-      const r = await listFn({ data: { token } });
+      const [r, t] = await Promise.all([
+        listFn({ data: { token } }),
+        listTeamsFn({ data: { token } }),
+      ]);
       setUsers(r.users as U[]);
       setLicenses(r.licenses as Lic[]);
+      setTeams(t.teams as Team[]);
     } catch (e: any) {
       toast.error(e?.message ?? "Erro ao carregar");
     } finally {
       setBusy(false);
+    }
+  };
+
+  const submitTeam = async () => {
+    const name = teamEdit.name.trim();
+    if (!name) return toast.error("Nome obrigatório");
+    try {
+      const token = await getToken();
+      if (teamEdit.id) {
+        await updateTeamFn({ data: { token, id: teamEdit.id, name } });
+      } else {
+        await createTeamFn({ data: { token, name } });
+      }
+      toast.success("Salvo");
+      setTeamOpen(false);
+      setTeamEdit({ name: "" });
+      reload();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Erro");
+    }
+  };
+
+  const removeTeam = async (id: string, name: string) => {
+    if (!confirm(`Excluir o time "${name}"?`)) return;
+    try {
+      await deleteTeamFn({ data: { token: await getToken(), id } });
+      reload();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Erro");
     }
   };
 
