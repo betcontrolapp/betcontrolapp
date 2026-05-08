@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       bets: {
         Row: {
+          bilhete: string | null
           created_at: string | null
           date: string
           descricao: string
@@ -25,9 +26,12 @@ export type Database = {
           notes: string | null
           retorno: number
           status: string
+          time1: string | null
+          time2: string | null
           user_id: string
         }
         Insert: {
+          bilhete?: string | null
           created_at?: string | null
           date: string
           descricao: string
@@ -37,9 +41,12 @@ export type Database = {
           notes?: string | null
           retorno?: number
           status?: string
+          time1?: string | null
+          time2?: string | null
           user_id: string
         }
         Update: {
+          bilhete?: string | null
           created_at?: string | null
           date?: string
           descricao?: string
@@ -49,6 +56,8 @@ export type Database = {
           notes?: string | null
           retorno?: number
           status?: string
+          time1?: string | null
+          time2?: string | null
           user_id?: string
         }
         Relationships: []
@@ -77,6 +86,27 @@ export type Database = {
           id?: string
           plan?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      teams: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          user_id?: string | null
         }
         Relationships: []
       }

@@ -4,12 +4,11 @@ import { ptBR } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { Stepper } from "./Stepper";
-import { brl } from "@/lib/format";
+import { TeamAutocomplete } from "./TeamAutocomplete";
 
 const SPORTS = ["⚽", "🏀", "🎾", "🥊", "🏎️", "🏆"];
 
@@ -21,54 +20,64 @@ export type BetFormData = {
   investido: number;
   retorno: number;
   status: "pendente" | "ganhou" | "perdeu";
+  time1: string;
+  time2: string;
 };
 
 export function BetModal({
   open,
   onOpenChange,
   initial,
-  defaultName,
   onSave,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   initial?: Partial<BetFormData>;
-  defaultName?: string;
   onSave: (data: BetFormData) => Promise<void>;
 }) {
   const [data, setData] = useState<BetFormData>({
     date: new Date().toISOString().slice(0, 10),
-    descricao: defaultName ?? "1",
+    descricao: "",
     esporte: "⚽",
     investido: 50,
     retorno: 0,
     status: "pendente",
+    time1: "",
+    time2: "",
     ...initial,
   });
   const [saving, setSaving] = useState(false);
   const [calOpen, setCalOpen] = useState(false);
 
-  const lucro = data.status !== "pendente" ? data.retorno - data.investido : 0;
   const dateObj = new Date(data.date + "T00:00:00");
+  const canSave = data.time1.trim().length > 0 && data.time2.trim().length > 0;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-card max-w-md text-[1.2em]">
+      <DialogContent className="bg-card max-w-md text-[1.2em] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{initial?.id ? "Editar Aposta" : "Nova Aposta"}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div>
-            <label className="text-xs text-muted-foreground">Evento</label>
-            <Input
-              value={data.descricao}
-              onChange={(e) => setData({ ...data, descricao: e.target.value })}
-              placeholder="Ex: 1, 2, 3..."
+            <label className="text-xs text-muted-foreground">Time 1 *</label>
+            <TeamAutocomplete
+              value={data.time1}
+              onChange={(v) => setData({ ...data, time1: v })}
+              placeholder="Ex: Flamengo"
+            />
+          </div>
+          <div>
+            <label className="text-xs text-muted-foreground">Time 2 *</label>
+            <TeamAutocomplete
+              value={data.time2}
+              onChange={(v) => setData({ ...data, time2: v })}
+              placeholder="Ex: Vasco"
             />
           </div>
           <div>
             <label className="text-xs text-muted-foreground">Esporte</label>
-            <div className="flex gap-2 mt-1">
+            <div className="flex gap-2 mt-1 flex-wrap">
               {SPORTS.map((s) => (
                 <button
                   key={s}
@@ -87,13 +96,10 @@ export function BetModal({
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal mt-1",
-                    !data.date && "text-muted-foreground",
-                  )}
+                  className={cn("w-full justify-start text-left font-normal mt-1")}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {data.date ? format(dateObj, "PPP", { locale: ptBR }) : "Escolher data"}
+                  {format(dateObj, "PPP", { locale: ptBR })}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -114,69 +120,20 @@ export function BetModal({
               </PopoverContent>
             </Popover>
           </div>
-          <div>
-            <label className="text-xs text-muted-foreground">Resultado</label>
-            <div className="grid grid-cols-3 gap-2 mt-1">
-              {(["pendente", "ganhou", "perdeu"] as const).map((s) => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() =>
-                    setData({
-                      ...data,
-                      status: s,
-                      retorno: s === "ganhou" ? data.retorno || data.investido * 2 : 0,
-                    })
-                  }
-                  className={`py-2 rounded-md border text-sm font-semibold ${
-                    data.status === s
-                      ? s === "pendente"
-                        ? "border-pending bg-pending-bg text-pending"
-                        : s === "ganhou"
-                          ? "border-win bg-win-bg text-win"
-                          : "border-loss bg-loss-bg text-loss"
-                      : "border-border text-muted-foreground"
-                  }`}
-                >
-                  {s === "pendente" ? "⏳ Não correu" : s === "ganhou" ? "✅ Ganhou" : "❌ Perdeu"}
-                </button>
-              ))}
-            </div>
-          </div>
           <Stepper
             label="Apostou"
             value={data.investido}
             onChange={(v) => setData({ ...data, investido: v })}
           />
-          {data.status === "ganhou" && (
-            <Stepper
-              label="Recebeu"
-              value={data.retorno}
-              onChange={(v) => setData({ ...data, retorno: v })}
-            />
-          )}
-          {data.status === "perdeu" && (
-            <Stepper
-              label="Perdeu"
-              value={Math.max(0, data.investido - data.retorno)}
-              max={data.investido}
-              onChange={(v) => setData({ ...data, retorno: Math.max(0, data.investido - v) })}
-            />
-          )}
-          {data.status !== "pendente" && (
-            <div
-              className={`text-center p-3 rounded-md font-bold text-lg ${lucro >= 0 ? "bg-win-bg text-win" : "bg-loss-bg text-loss"}`}
-            >
-              {lucro >= 0 ? "Lucro " : "Perda "}
-              {brl(lucro)}
-            </div>
-          )}
           <Button
             className="w-full font-bold"
-            disabled={saving || !data.descricao}
+            disabled={saving || !canSave}
             onClick={async () => {
               setSaving(true);
-              await onSave(data);
+              await onSave({
+                ...data,
+                descricao: `${data.time1} × ${data.time2}`,
+              });
               setSaving(false);
               onOpenChange(false);
             }}

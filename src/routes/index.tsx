@@ -8,10 +8,34 @@ import { brl, monthKey, monthLabel } from "@/lib/format";
 import { BetCard } from "@/components/BetCard";
 import { BetModal, type BetFormData } from "@/components/BetModal";
 import { ConcluirModal } from "@/components/ConcluirModal";
+import { ensureTeam } from "@/components/TeamAutocomplete";
 import { Plus, BarChart3, LogOut } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/")({ component: Index });
+
+async function generateBilhete(userId: string, date: string): Promise<string> {
+  const d = new Date(date + "T00:00:00");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const yyyy = d.getFullYear();
+  const start = `${yyyy}-${mm}-01`;
+  const nextMonth = new Date(yyyy, d.getMonth() + 1, 1);
+  const end = `${nextMonth.getFullYear()}-${String(nextMonth.getMonth() + 1).padStart(2, "0")}-01`;
+  const { data } = await supabase
+    .from("bets")
+    .select("bilhete")
+    .eq("user_id", userId)
+    .gte("date", start)
+    .lt("date", end);
+  const nums = (data ?? [])
+    .map((b: any) => {
+      const m = /^(\d{2})\/(\d{3})$/.exec(b.bilhete ?? "");
+      return m ? parseInt(m[2], 10) : 0;
+    })
+    .filter((n) => n > 0);
+  const next = (nums.length ? Math.max(...nums) : 0) + 1;
+  return `${mm}/${String(next).padStart(3, "0")}`;
+}
 
 function Index() {
   const nav = useNavigate();
@@ -27,7 +51,10 @@ function Index() {
   }, [authLoading, user, nav]);
 
   const reload = async () => {
-    const { data } = await supabase.from("bets").select("*").order("date", { ascending: false });
+    const { data } = await supabase
+      .from("bets")
+      .select("*")
+      .order("created_at", { ascending: false });
     setBets(data ?? []);
   };
 
@@ -78,6 +105,9 @@ function Index() {
   }
 
   const save = async (data: BetFormData) => {
+    if (data.time1) await ensureTeam(data.time1, user.id);
+    if (data.time2) await ensureTeam(data.time2, user.id);
+
     if (data.id) {
       const { error } = await supabase
         .from("bets")
@@ -88,6 +118,8 @@ function Index() {
           investido: data.investido,
           retorno: data.retorno,
           status: data.status,
+          time1: data.time1,
+          time2: data.time2,
         })
         .eq("id", data.id);
       if (error) {
@@ -96,6 +128,7 @@ function Index() {
       }
       toast.success("Atualizado");
     } else {
+      const bilhete = await generateBilhete(user.id, data.date);
       const { error } = await supabase.from("bets").insert({
         user_id: user.id,
         date: data.date,
@@ -104,19 +137,17 @@ function Index() {
         investido: data.investido,
         retorno: data.retorno,
         status: data.status,
+        time1: data.time1,
+        time2: data.time2,
+        bilhete,
       });
       if (error) {
         toast.error(error.message);
         return;
       }
-      toast.success("Aposta salva");
+      toast.success(`Aposta salva · #${bilhete}`);
     }
     reload();
-  };
-
-  const updateBet = async (id: string, patch: Partial<Tables<"bets">>) => {
-    setBets((b) => b.map((x) => (x.id === id ? ({ ...x, ...patch } as Tables<"bets">) : x)));
-    await supabase.from("bets").update(patch).eq("id", id);
   };
 
   const deleteBet = async (id: string) => {
@@ -162,7 +193,6 @@ function Index() {
                 <BetCard
                   key={b.id}
                   bet={b}
-                  onUpdate={(p) => updateBet(b.id, p)}
                   onDelete={() => deleteBet(b.id)}
                   onEdit={() => setEditing(b)}
                   onConcluir={() => setConcluding(b)}
@@ -230,14 +260,6 @@ function Index() {
             setEditing(null);
           }
         }}
-        defaultName={(() => {
-          const today = new Date();
-          const k = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`;
-          const inMonth = bets.filter((b) => monthKey(b.date) === k);
-          const nums = inMonth.map((b) => parseInt(b.descricao, 10)).filter((n) => !isNaN(n));
-          const next = (nums.length ? Math.max(...nums) : 0) + 1;
-          return String(next);
-        })()}
         initial={
           editing
             ? {
@@ -248,6 +270,8 @@ function Index() {
                 investido: Number(editing.investido),
                 retorno: Number(editing.retorno),
                 status: editing.status as "pendente" | "ganhou" | "perdeu",
+                time1: (editing as any).time1 ?? "",
+                time2: (editing as any).time2 ?? "",
               }
             : undefined
         }

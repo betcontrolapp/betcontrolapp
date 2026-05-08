@@ -8,6 +8,10 @@ import {
   adminCreateUser,
   adminUpsertLicense,
   adminToggleLicense,
+  adminListTeams,
+  adminCreateTeam,
+  adminUpdateTeam,
+  adminDeleteTeam,
 } from "@/server/admin.functions";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
@@ -36,6 +40,7 @@ type Lic = {
   expires_at: string;
 };
 type U = { id: string; email: string | undefined; created_at: string };
+type Team = { id: string; name: string; created_at: string; user_id: string | null };
 
 function AdminPage() {
   const nav = useNavigate();
@@ -44,9 +49,17 @@ function AdminPage() {
   const createUserFn = useServerFn(adminCreateUser);
   const upsertFn = useServerFn(adminUpsertLicense);
   const toggleFn = useServerFn(adminToggleLicense);
+  const listTeamsFn = useServerFn(adminListTeams);
+  const createTeamFn = useServerFn(adminCreateTeam);
+  const updateTeamFn = useServerFn(adminUpdateTeam);
+  const deleteTeamFn = useServerFn(adminDeleteTeam);
 
   const [users, setUsers] = useState<U[]>([]);
   const [licenses, setLicenses] = useState<Lic[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [teamSearch, setTeamSearch] = useState("");
+  const [teamOpen, setTeamOpen] = useState(false);
+  const [teamEdit, setTeamEdit] = useState<{ id?: string; name: string }>({ name: "" });
   const [busy, setBusy] = useState(true);
 
   const [newUserOpen, setNewUserOpen] = useState(false);
@@ -78,13 +91,46 @@ function AdminPage() {
     setBusy(true);
     try {
       const token = await getToken();
-      const r = await listFn({ data: { token } });
+      const [r, t] = await Promise.all([
+        listFn({ data: { token } }),
+        listTeamsFn({ data: { token } }),
+      ]);
       setUsers(r.users as U[]);
       setLicenses(r.licenses as Lic[]);
+      setTeams(t.teams as Team[]);
     } catch (e: any) {
       toast.error(e?.message ?? "Erro ao carregar");
     } finally {
       setBusy(false);
+    }
+  };
+
+  const submitTeam = async () => {
+    const name = teamEdit.name.trim();
+    if (!name) return toast.error("Nome obrigatório");
+    try {
+      const token = await getToken();
+      if (teamEdit.id) {
+        await updateTeamFn({ data: { token, id: teamEdit.id, name } });
+      } else {
+        await createTeamFn({ data: { token, name } });
+      }
+      toast.success("Salvo");
+      setTeamOpen(false);
+      setTeamEdit({ name: "" });
+      reload();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Erro");
+    }
+  };
+
+  const removeTeam = async (id: string, name: string) => {
+    if (!confirm(`Excluir o time "${name}"?`)) return;
+    try {
+      await deleteTeamFn({ data: { token: await getToken(), id } });
+      reload();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Erro");
     }
   };
 
@@ -183,6 +229,7 @@ function AdminPage() {
           <TabsList className="mb-4">
             <TabsTrigger value="users">Usuários</TabsTrigger>
             <TabsTrigger value="licenses">Licenças</TabsTrigger>
+            <TabsTrigger value="teams">Times</TabsTrigger>
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
           </TabsList>
 
@@ -289,6 +336,69 @@ function AdminPage() {
             </div>
           </TabsContent>
 
+          <TabsContent value="teams">
+            <div className="flex justify-between items-center mb-3 gap-2">
+              <Input
+                placeholder="Buscar time..."
+                value={teamSearch}
+                onChange={(e) => setTeamSearch(e.target.value)}
+                className="max-w-xs"
+              />
+              <Button
+                onClick={() => {
+                  setTeamEdit({ name: "" });
+                  setTeamOpen(true);
+                }}
+              >
+                + Adicionar time
+              </Button>
+            </div>
+            <div className="rounded-xl border border-border overflow-hidden text-[1.2em]">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Criado em</TableHead>
+                    <TableHead></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {teams
+                    .filter((t) =>
+                      t.name.toLowerCase().includes(teamSearch.toLowerCase()),
+                    )
+                    .map((t) => (
+                      <TableRow key={t.id}>
+                        <TableCell>{t.name}</TableCell>
+                        <TableCell>
+                          {new Date(t.created_at).toLocaleDateString("pt-BR")}
+                        </TableCell>
+                        <TableCell className="flex gap-2 justify-end">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setTeamEdit({ id: t.id, name: t.name });
+                              setTeamOpen(true);
+                            }}
+                          >
+                            Editar
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => removeTeam(t.id, t.name)}
+                          >
+                            Excluir
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </div>
+          </TabsContent>
+
           <TabsContent value="dashboard">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               <StatCard label="Usuários" value={stats.totalUsers} color="blue" />
@@ -389,6 +499,26 @@ function AdminPage() {
             Ativo
           </label>
           <Button onClick={submitLic}>Salvar</Button>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={teamOpen}
+        onOpenChange={(v) => {
+          setTeamOpen(v);
+          if (!v) setTeamEdit({ name: "" });
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{teamEdit.id ? "Editar time" : "Novo time"}</DialogTitle>
+          </DialogHeader>
+          <Input
+            placeholder="Nome do time"
+            value={teamEdit.name}
+            onChange={(e) => setTeamEdit({ ...teamEdit, name: e.target.value })}
+          />
+          <Button onClick={submitTeam}>Salvar</Button>
         </DialogContent>
       </Dialog>
     </div>
