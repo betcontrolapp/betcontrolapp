@@ -229,6 +229,7 @@ function AdminPage() {
           <TabsList className="mb-4">
             <TabsTrigger value="users">Usuários</TabsTrigger>
             <TabsTrigger value="licenses">Licenças</TabsTrigger>
+            <TabsTrigger value="teams">Times</TabsTrigger>
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
           </TabsList>
 
