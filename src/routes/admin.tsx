@@ -40,6 +40,7 @@ type Lic = {
   expires_at: string;
 };
 type U = { id: string; email: string | undefined; created_at: string };
+type Team = { id: string; name: string; created_at: string; user_id: string | null };
 
 function AdminPage() {
   const nav = useNavigate();
@@ -48,9 +49,17 @@ function AdminPage() {
   const createUserFn = useServerFn(adminCreateUser);
   const upsertFn = useServerFn(adminUpsertLicense);
   const toggleFn = useServerFn(adminToggleLicense);
+  const listTeamsFn = useServerFn(adminListTeams);
+  const createTeamFn = useServerFn(adminCreateTeam);
+  const updateTeamFn = useServerFn(adminUpdateTeam);
+  const deleteTeamFn = useServerFn(adminDeleteTeam);
 
   const [users, setUsers] = useState<U[]>([]);
   const [licenses, setLicenses] = useState<Lic[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [teamSearch, setTeamSearch] = useState("");
+  const [teamOpen, setTeamOpen] = useState(false);
+  const [teamEdit, setTeamEdit] = useState<{ id?: string; name: string }>({ name: "" });
   const [busy, setBusy] = useState(true);
 
   const [newUserOpen, setNewUserOpen] = useState(false);
