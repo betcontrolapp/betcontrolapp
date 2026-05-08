@@ -8,6 +8,10 @@ import {
   adminCreateUser,
   adminUpsertLicense,
   adminToggleLicense,
+  adminListTeams,
+  adminCreateTeam,
+  adminUpdateTeam,
+  adminDeleteTeam,
 } from "@/server/admin.functions";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
