@@ -336,7 +336,69 @@ function AdminPage() {
             </div>
           </TabsContent>
 
-          <TabsContent value="dashboard">
+          <TabsContent value="teams">
+            <div className="flex justify-between items-center mb-3 gap-2">
+              <Input
+                placeholder="Buscar time..."
+                value={teamSearch}
+                onChange={(e) => setTeamSearch(e.target.value)}
+                className="max-w-xs"
+              />
+              <Button
+                onClick={() => {
+                  setTeamEdit({ name: "" });
+                  setTeamOpen(true);
+                }}
+              >
+                + Adicionar time
+              </Button>
+            </div>
+            <div className="rounded-xl border border-border overflow-hidden text-[1.2em]">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Criado em</TableHead>
+                    <TableHead></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {teams
+                    .filter((t) =>
+                      t.name.toLowerCase().includes(teamSearch.toLowerCase()),
+                    )
+                    .map((t) => (
+                      <TableRow key={t.id}>
+                        <TableCell>{t.name}</TableCell>
+                        <TableCell>
+                          {new Date(t.created_at).toLocaleDateString("pt-BR")}
+                        </TableCell>
+                        <TableCell className="flex gap-2 justify-end">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setTeamEdit({ id: t.id, name: t.name });
+                              setTeamOpen(true);
+                            }}
+                          >
+                            Editar
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => removeTeam(t.id, t.name)}
+                          >
+                            Excluir
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </div>
+          </TabsContent>
+
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               <StatCard label="Usuários" value={stats.totalUsers} color="blue" />
               <StatCard label="Licenças ativas" value={stats.active} color="blue" />
