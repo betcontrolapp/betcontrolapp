@@ -11,7 +11,7 @@ import { ConcluirModal } from "@/components/ConcluirModal";
 import { ensureTeam } from "@/components/TeamAutocomplete";
 import { Plus, BarChart3, LogOut } from "lucide-react";
 import { toast } from "sonner";
-import logo from "@/assets/bet-control-logo.webp";
+import logo from "@/assets/bet-control-logo.png";
 
 export const Route = createFileRoute("/")({ component: Index });
 
