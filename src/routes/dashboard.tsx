@@ -171,7 +171,7 @@ function Dashboard() {
           <Card
             label="Taxa de acerto"
             value={`${stats.taxa.toFixed(0)}%`}
-            sub={`${stats.wins}G · ${stats.losses}P`}
+            sub={`${stats.wins}G · ${stats.losses}P · ${stats.wins + stats.losses} jogos`}
           />
         </div>
 
