@@ -96,14 +96,6 @@ function Dashboard() {
       </header>
 
       <main className="max-w-[500px] mx-auto px-4 py-4 space-y-4">
-        <div className="relative h-52 rounded-2xl overflow-hidden border border-border">
-          <img
-            src={heroImg}
-            alt="Dashboard"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#060b14] via-[#060b14]/50 to-transparent" />
-          <div className="absolute inset-0 flex flex-col justify-end p-4">
         <div className="flex justify-center pt-2">
           <img src={logo} alt="Bet Control" style={{ height: 48 }} className="w-auto" />
         </div>
@@ -122,13 +114,6 @@ function Dashboard() {
             </h2>
           </div>
         </div>
-            <div className="text-[10px] uppercase tracking-[0.3em] text-white/70 mt-2">Performance</div>
-            <h2 className="text-xl font-extrabold leading-tight bg-gradient-to-r from-blue-400 via-fuchsia-400 to-red-400 bg-clip-text text-transparent">
-              SEUS RESULTADOS
-            </h2>
-          </div>
-        </div>
-
         <div className="bg-card border border-border rounded-xl p-3 space-y-3 text-[1.2em]">
           <div>
             <div className="text-[10px] uppercase text-muted-foreground mb-1">Ano</div>
