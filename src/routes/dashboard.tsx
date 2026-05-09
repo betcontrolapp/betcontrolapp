@@ -106,8 +106,8 @@ function Dashboard() {
           <img
             src={logo}
             alt="Bet Control"
-            style={{ height: 80, marginTop: 16 }}
-            className="absolute top-0 left-1/2 -translate-x-1/2 w-auto z-10"
+            style={{ width: "40%", height: "auto", paddingTop: 16 }}
+            className="absolute top-0 left-1/2 -translate-x-1/2 z-10"
           />
           <div className="absolute inset-0 flex flex-col justify-end p-4">
             <div className="text-[10px] uppercase tracking-[0.3em] text-white/70">Performance</div>
