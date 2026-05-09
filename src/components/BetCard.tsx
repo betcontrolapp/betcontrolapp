@@ -47,16 +47,19 @@ export function BetCard({
           <div className="flex items-center gap-2 min-w-0">
             <span className="text-xl">{bet.esporte}</span>
             <div className="min-w-0">
-              {bilhete && (
-                <div className="text-xs text-muted-foreground font-bold">Bilhete #{formatBilhete(bilhete)}</div>
-              )}
+              <div
+                className="flex items-center justify-between gap-2 text-xs"
+                style={{ color: "#64748b", marginBottom: 6 }}
+              >
+                {bilhete && <span className="font-bold">Bilhete #{formatBilhete(bilhete)}</span>}
+                <span>Jogo Principal</span>
+              </div>
               <span
                 className="font-semibold block break-words"
                 style={{ fontSize: "14px", whiteSpace: "normal", lineHeight: 1.2 }}
               >
                 {t1 && t2 ? `${t1} × ${t2}` : bet.descricao}
               </span>
-              <div className="text-[10px]" style={{ color: "#64748b" }}>Jogo Principal</div>
             </div>
           </div>
           <span className={`text-xs px-2 py-1 rounded-full font-bold uppercase ${CHIP[status]}`}>
