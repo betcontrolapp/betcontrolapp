@@ -16,7 +16,7 @@ import {
   Cell,
 } from "recharts";
 import heroImg from "@/assets/dashboard-hero.jpg";
-import logo from "@/assets/bet-control-logo.webp";
+import logo from "@/assets/bet-control-logo.png";
 import { Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/dashboard")({ component: Dashboard });
