@@ -149,7 +149,7 @@ function Index() {
         toast.error(error.message);
         return;
       }
-      toast.success(`Aposta salva · #${bilhete}`);
+      toast.success(`Aposta salva · #${formatBilhete(bilhete)}`);
     }
     reload();
   };
