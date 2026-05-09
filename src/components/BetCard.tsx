@@ -50,9 +50,13 @@ export function BetCard({
               {bilhete && (
                 <div className="text-xs text-muted-foreground font-bold">Bilhete #{formatBilhete(bilhete)}</div>
               )}
-              <span className="font-semibold truncate block">
+              <span
+                className="font-semibold block break-words"
+                style={{ fontSize: "14px", whiteSpace: "normal", lineHeight: 1.2 }}
+              >
                 {t1 && t2 ? `${t1} × ${t2}` : bet.descricao}
               </span>
+              <div className="text-[10px]" style={{ color: "#64748b" }}>Jogo Principal</div>
             </div>
           </div>
           <span className={`text-xs px-2 py-1 rounded-full font-bold uppercase ${CHIP[status]}`}>
