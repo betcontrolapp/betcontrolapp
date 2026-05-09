@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useLicense } from "@/hooks/useLicense";
 import type { Tables } from "@/integrations/supabase/types";
-import { brl, monthKey, monthLabel } from "@/lib/format";
+import { brl, monthKey, monthLabel, formatBilhete } from "@/lib/format";
 import { BetCard } from "@/components/BetCard";
 import { BetModal, type BetFormData } from "@/components/BetModal";
 import { ConcluirModal } from "@/components/ConcluirModal";
