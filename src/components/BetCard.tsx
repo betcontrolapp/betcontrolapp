@@ -48,7 +48,7 @@ export function BetCard({
             <span className="text-xl">{bet.esporte}</span>
             <div className="min-w-0">
               {bilhete && (
-                <div className="text-xs text-muted-foreground font-bold">Bilhete #{bilhete}</div>
+                <div className="text-xs text-muted-foreground font-bold">Bilhete #{formatBilhete(bilhete)}</div>
               )}
               <span className="font-semibold truncate block">
                 {t1 && t2 ? `${t1} × ${t2}` : bet.descricao}
