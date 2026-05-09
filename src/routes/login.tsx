@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import logo from "@/assets/bet-control-logo.webp";
 
 export const Route = createFileRoute("/login")({ component: LoginPage });
 
@@ -50,9 +51,8 @@ function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-sm bg-card border border-border rounded-2xl p-6 space-y-4 text-[1.2em]">
-        <div className="text-center">
-          <div className="text-3xl font-bold">🏆 BET TRACK</div>
-          <div className="text-xs text-muted-foreground mt-1">PRO</div>
+        <div className="text-center flex flex-col items-center">
+          <img src={logo} alt="Bet Control" style={{ height: 64 }} className="w-auto" />
         </div>
         <form onSubmit={submit} className="space-y-3">
           <Input
