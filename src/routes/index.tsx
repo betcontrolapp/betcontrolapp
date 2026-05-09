@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useLicense } from "@/hooks/useLicense";
 import type { Tables } from "@/integrations/supabase/types";
-import { brl, monthKey, monthLabel } from "@/lib/format";
+import { brl, monthKey, monthLabel, formatBilhete } from "@/lib/format";
 import { BetCard } from "@/components/BetCard";
 import { BetModal, type BetFormData } from "@/components/BetModal";
 import { ConcluirModal } from "@/components/ConcluirModal";
@@ -29,12 +29,16 @@ async function generateBilhete(userId: string, date: string): Promise<string> {
     .lt("date", end);
   const nums = (data ?? [])
     .map((b: any) => {
-      const m = /^(\d{2})\/(\d{3})$/.exec(b.bilhete ?? "");
-      return m ? parseInt(m[2], 10) : 0;
+      const s = b.bilhete ?? "";
+      const m1 = /^(\d{3})\/(\d{2})$/.exec(s);
+      if (m1) return parseInt(m1[1], 10);
+      const m2 = /^(\d{2})\/(\d{3})$/.exec(s);
+      if (m2) return parseInt(m2[2], 10);
+      return 0;
     })
     .filter((n) => n > 0);
   const next = (nums.length ? Math.max(...nums) : 0) + 1;
-  return `${mm}/${String(next).padStart(3, "0")}`;
+  return `${String(next).padStart(3, "0")}/${mm}`;
 }
 
 function Index() {
@@ -145,7 +149,7 @@ function Index() {
         toast.error(error.message);
         return;
       }
-      toast.success(`Aposta salva · #${bilhete}`);
+      toast.success(`Aposta salva · #${formatBilhete(bilhete)}`);
     }
     reload();
   };
