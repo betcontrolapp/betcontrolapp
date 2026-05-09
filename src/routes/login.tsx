@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import logo from "@/assets/bet-control-logo.webp";
+import logo from "@/assets/bet-control-logo.png";
 
 export const Route = createFileRoute("/login")({ component: LoginPage });
 
