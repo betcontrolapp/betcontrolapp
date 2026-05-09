@@ -1,5 +1,5 @@
 import { Pencil, Trash2, Check } from "lucide-react";
-import { brl } from "@/lib/format";
+import { brl, formatBilhete } from "@/lib/format";
 import type { Tables } from "@/integrations/supabase/types";
 
 const STATUS_STYLES = {
