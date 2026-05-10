@@ -73,7 +73,15 @@ export function BetCard({
           </span>
         </div>
 
-        <div className="bg-black/30 rounded-md p-3">
+        <div
+          className="rounded-md"
+          style={{
+            border: `1px solid ${STATUS_BORDER_COLOR[status]}`,
+            borderRadius: 8,
+            padding: "10px 14px",
+            background: "rgba(0,0,0,0.3)",
+          }}
+        >
           <div className="text-[10px] uppercase text-muted-foreground">Apostou</div>
           <div className="font-bold">{brl(investido)}</div>
         </div>
