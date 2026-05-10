@@ -12,6 +12,7 @@ import { ensureTeam } from "@/components/TeamAutocomplete";
 import { Plus, BarChart3, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import logo from "@/assets/bet-control-logo.png";
+import { PinGate } from "@/components/PinGate";
 
 export const Route = createFileRoute("/")({ component: Index });
 
@@ -162,10 +163,11 @@ function Index() {
   };
 
   return (
+    <PinGate email={user.email ?? ""}>
     <div className="min-h-screen pb-12">
       <header className="sticky top-0 z-10 bg-[#060b14]/90 backdrop-blur border-b border-border">
         <div className="max-w-[500px] mx-auto px-4 py-3 flex items-center justify-between">
-          <img src={logo} alt="Bet Control" style={{ width: "25%", height: "auto" }} className="self-center" />
+          <img src={logo} alt="Bet Control" style={{ width: "55%", height: "auto" }} className="self-center" />
           <button
             onClick={() => supabase.auth.signOut().then(() => nav({ to: "/login" }))}
             className="text-muted-foreground hover:text-foreground"
