@@ -124,7 +124,12 @@ export function BetCard({
             <Check className="w-4 h-4" /> Concluir
           </button>
         ) : (
-          <div className="py-3 text-sm text-muted-foreground text-center bg-card">—</div>
+          <div
+            className="py-3 text-sm font-bold text-white flex items-center justify-center"
+            style={{ background: "#1e293b", cursor: "default" }}
+          >
+            —
+          </div>
         )}
       </div>
     </div>
