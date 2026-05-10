@@ -19,10 +19,10 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "BetTrack Pro" },
+      { title: "Bet Control" },
       { name: "description", content: "Controle suas apostas esportivas." },
-      { property: "og:title", content: "BetTrack Pro" },
-      { name: "twitter:title", content: "BetTrack Pro" },
+      { property: "og:title", content: "Bet Control" },
+      { name: "twitter:title", content: "Bet Control" },
       { property: "og:description", content: "Controle suas apostas esportivas." },
       { name: "twitter:description", content: "Controle suas apostas esportivas." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/8c47509a-1442-4742-bc90-476d1f12b6d0/id-preview-e37b2164--4ce0038a-84e7-42ed-9b16-85ac02655f1d.lovable.app-1778053737442.png" },
