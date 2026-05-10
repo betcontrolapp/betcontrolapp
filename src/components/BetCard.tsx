@@ -14,6 +14,12 @@ const CHIP = {
   perdeu: "bg-loss text-white",
 };
 
+const STATUS_BORDER_COLOR = {
+  pendente: "#f59e0b",
+  ganhou: "#3b82f6",
+  perdeu: "#ef4444",
+};
+
 const fmtDateTime = (iso: string | null) => {
   if (!iso) return "";
   const d = new Date(iso);
@@ -67,7 +73,15 @@ export function BetCard({
           </span>
         </div>
 
-        <div className="bg-black/30 rounded-md p-3">
+        <div
+          className="rounded-md"
+          style={{
+            border: `1px solid ${STATUS_BORDER_COLOR[status]}`,
+            borderRadius: 8,
+            padding: "10px 14px",
+            background: "rgba(0,0,0,0.3)",
+          }}
+        >
           <div className="text-[10px] uppercase text-muted-foreground">Apostou</div>
           <div className="font-bold">{brl(investido)}</div>
         </div>
@@ -110,7 +124,12 @@ export function BetCard({
             <Check className="w-4 h-4" /> Concluir
           </button>
         ) : (
-          <div className="py-3 text-sm text-muted-foreground text-center bg-card">—</div>
+          <div
+            className="py-3 text-sm font-bold text-white flex items-center justify-center"
+            style={{ background: "#1e293b", cursor: "default" }}
+          >
+            —
+          </div>
         )}
       </div>
     </div>
