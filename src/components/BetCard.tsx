@@ -14,6 +14,12 @@ const CHIP = {
   perdeu: "bg-loss text-white",
 };
 
+const STATUS_BORDER_COLOR = {
+  pendente: "#f59e0b",
+  ganhou: "#3b82f6",
+  perdeu: "#ef4444",
+};
+
 const fmtDateTime = (iso: string | null) => {
   if (!iso) return "";
   const d = new Date(iso);
