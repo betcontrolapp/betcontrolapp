@@ -216,7 +216,8 @@ function Index() {
               </div>
               <button
                 onClick={() => setModalOpen(true)}
-                className="w-full border-2 border-dashed border-border rounded-xl py-4 text-muted-foreground hover:text-foreground hover:border-primary"
+                className="w-full font-bold py-4 rounded-xl text-white"
+                style={{ background: "#2563eb" }}
               >
                 <Plus className="inline w-4 h-4" /> Nova Aposta
               </button>
@@ -227,7 +228,8 @@ function Index() {
         {grouped.length === 0 && (
           <button
             onClick={() => setModalOpen(true)}
-            className="w-full border-2 border-dashed border-border rounded-xl py-4"
+            className="w-full font-bold py-4 rounded-xl text-white"
+            style={{ background: "#2563eb" }}
           >
             <Plus className="inline w-4 h-4" /> Nova Aposta
           </button>
@@ -235,7 +237,8 @@ function Index() {
 
         <Link
           to="/dashboard"
-          className="block w-full text-center bg-primary text-primary-foreground font-bold py-3 rounded-xl"
+          className="block w-full text-center font-bold py-3 rounded-xl text-white"
+          style={{ background: "#ff6b1a" }}
         >
           <BarChart3 className="inline w-4 h-4 mr-1" /> Dashboard
         </Link>
@@ -297,5 +300,6 @@ function Index() {
         }}
       />
     </div>
+    </PinGate>
   );
 }
