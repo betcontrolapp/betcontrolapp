@@ -166,7 +166,7 @@ function Index() {
     <PinGate email={user.email ?? ""}>
     <div className="min-h-screen pb-12">
       <header className="sticky top-0 z-10 bg-[#060b14]/90 backdrop-blur border-b border-border">
-        <div className="max-w-[500px] mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="max-w-[500px] mx-auto px-4 py-1.5 flex items-center justify-between">
           <img src={logo} alt="Bet Control" style={{ width: "55%", height: "auto" }} className="self-center" />
           <button
             onClick={() => supabase.auth.signOut().then(() => nav({ to: "/login" }))}
@@ -177,7 +177,7 @@ function Index() {
         </div>
       </header>
 
-      <main className="max-w-[500px] mx-auto px-4 py-4 space-y-8">
+      <main className="max-w-[500px] mx-auto px-4 pt-2 pb-4 space-y-8">
         {grouped.length === 0 && (
           <div className="text-center text-muted-foreground py-12">
             Nenhuma aposta ainda. Clique em + para começar.
